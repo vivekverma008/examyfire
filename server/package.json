@@ -1,0 +1,72 @@
+{
+
+  "name": "server",
+
+  "version": "1.0.0",
+
+  "description": "lets creating a contest to teachers and users can submit their solutions ",
+
+  "main": "index.js",
+
+  "scripts": {
+
+    "test": "echo \"Error: no test specified\" && exit 1",
+
+    "start": "nodemon index.js"
+
+  },
+
+  "repository": {
+
+    "type": "git",
+
+    "url": "git+https://github.com/vivekverma008/examyfire.git"
+
+  },
+
+  "author": "vivek",
+
+  "license": "ISC",
+
+  "bugs": {
+
+    "url": "https://github.com/vivekverma008/examyfire/issues"
+
+  },
+
+  "homepage": "https://github.com/vivekverma008/examyfire#readme",
+
+  "dependencies": {
+
+    "body-parser": "^1.20.2",
+
+    "bullmq": "^3.10.4",
+
+    "express": "^4.18.2",
+
+    "express-session": "^1.17.3",
+
+    "express-validator": "^6.15.0",
+
+    "ioredis": "^5.3.1",
+
+    "jsonwebtoken": "^9.0.0",
+
+    "moment": "^2.29.4",
+
+    "moment-timezone": "^0.5.43",
+
+    "mongoose": "^7.0.3",
+
+    "nodemon": "^2.0.22",
+
+    "passport": "^0.6.0",
+
+    "passport-jwt": "^4.0.1",
+
+    "uuid": "^9.0.0"
+
+  }
+
+}
+
