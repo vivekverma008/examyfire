@@ -4,9 +4,17 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const Admin = require('../models/admin');
 const User = require('../models/user');
 var opts = {
-    jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest : (req)=>{
+        let token = null;
+        if (req && req.cookies) {
+        token = req.cookies.jwt;
+        }
+    return token;
+    },
     secretOrKey : 'examyfire'
 }
+
+
 
 passport.use('admin-token',new JwtStrategy(opts, async function(jwt_payload,done){
     try{

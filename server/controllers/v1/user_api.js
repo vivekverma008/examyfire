@@ -131,6 +131,7 @@ myWorker.on("error" , (err)=>{
 module.exports.createSession = async function(req,res,next){
     
     try{
+        console.log(req.body);
         let user = await User.findOne({email : req.body.email});
         console.log(user);
         if(!user || req.body.password != user.password){
@@ -138,10 +139,12 @@ module.exports.createSession = async function(req,res,next){
                 message : 'Invalid username or password'
             })
         }
+        let token =  jwt.sign(user.toJSON(),'examyfire',{expiresIn : '1d'});
+        res.cookie('jwt' , token , {httpOnly : true , sameSite : "none" , secure : true});
         return res.json({
             message : 'signIn successfull , here is your token',
             data : {
-                token : jwt.sign(user.toJSON(),'examyfire',{expiresIn : '1d'})
+                token : "token"
             } 
         })
     
@@ -220,6 +223,7 @@ module.exports.submit = async function(req,res){
     let contest = await Contest.findById(contestid);
     let valid = false;
     let problem = await Problem.findById(problemId);
+    console.log(req.body);
     if(problem.status == true)valid = true;
     if(contest){
         for(prob of contest.questions){
@@ -256,7 +260,7 @@ module.exports.submit = async function(req,res){
             
 
         });
-        console.log(job);
+        
 
         await submitQueue.add('submission',{
             id : job.id,
@@ -266,7 +270,7 @@ module.exports.submit = async function(req,res){
             
 
         );
-        
+        console.log("got request");
         return res.status(200).json({
             message : "success " , 
             data : job.id
@@ -278,7 +282,44 @@ module.exports.submit = async function(req,res){
             error : err
         })
     }
+};
+module.exports.getjobStatus = async function(req,res){
+    try{
+        console.log(req.params);
+        let job;
+    
+        if(req.params != null && req.params != undefined)
+            job = await Job.findById(req.params.id);
+        console.log(job.status);
+        console.log(job.verdict);
+        if(!job){
+            return res.json({
+                message : "false",
+                data : null
+            });
+        }
+        else{
+            return res.json({
+                message : "success",
+                data : job.status,
+                verdict : job.verdict
+            });
+        } 
+    }catch(err){
+        console.log(err.message);
+    }
+    
+    
 }
+module.exports.destroySession = async function(req,res){
+    res.cookie('jwt' , "token" , {httpOnly : true , sameSite : "none" , secure : true});
+    return res.json({
+        message : "success"
+    })
+}
+
+
+
 
 
 
