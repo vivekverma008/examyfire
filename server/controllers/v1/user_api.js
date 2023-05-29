@@ -101,12 +101,12 @@ const myWorker = new Worker("submitqueue",
         console.log(job);
         if(job["verdict"] == "ac"){
             
-            const whosolved = new Set(problem.solvedby);
-            whosolved.add(job.userId);
-            // console.log(data.userId);
-            // console.log(whosolved);
+            const whosolvedSet = new Set(problem.solvedby.map(obj => JSON.stringify(obj._id)));
+            whosolvedSet.add(JSON.stringify(job.userId));
             
-            problem.solvedby = [...whosolved];
+            const uniqueSolvedBy = Array.from(whosolvedSet).map(str => JSON.parse(str));
+            problem.solvedby = uniqueSolvedBy;
+            
             // console.log(problem.solvedby);
             await problem.save();
         }
@@ -140,11 +140,11 @@ module.exports.createSession = async function(req,res,next){
             })
         }
         let token =  jwt.sign(user.toJSON(),'examyfire',{expiresIn : '1d'});
-        res.cookie('jwt' , token , {httpOnly : true , sameSite : "none" , secure : true});
+        await res.cookie('jwt' , token , {httpOnly : true , sameSite : "none" , secure : true});
         return res.json({
             message : 'signIn successfull , here is your token',
             data : {
-                token : "token"
+                token : token
             } 
         })
     
@@ -159,7 +159,7 @@ module.exports.createSession = async function(req,res,next){
     
 }  
 module.exports.createProblem = async(req,res)=>{
-    console.log(req.body);
+    console.log("in problem " , req.body);
     if(req.user.usertype != 'Teacher'){
         return res.status(400).json({
             message : 'not authorized'
@@ -167,11 +167,11 @@ module.exports.createProblem = async(req,res)=>{
     }
 
     try{
-
+        let bdy = await req.body;
+        console.log(bdy);
         await body('title').isLength({min: 3}).run(req);
         await body('testcases').isArray({min : 2}).run(req);
         
-        let bdy = await req.body;
         bdy.createdBy = await req.user;
         
         let prob = await Problem.findOne({title : req.body.title});
@@ -187,6 +187,7 @@ module.exports.createProblem = async(req,res)=>{
         });
 
     }catch(err){
+        console.log(err.message);
         return res.status(440).json({
             message : 'internal server err',
             error : err
@@ -220,22 +221,22 @@ module.exports.submit = async function(req,res){
     }
 
     let userid = req.user.id;
-    let contest = await Contest.findById(contestid);
-    let valid = false;
+    // let contest = await Contest.findById(contestid);
+    let valid = true;
     let problem = await Problem.findById(problemId);
     console.log(req.body);
     if(problem.status == true)valid = true;
-    if(contest){
-        for(prob of contest.questions){
-            if(prob == problemId){
-                let registered = await ContestRegistration.find({user : req.user.id, test : contest.id});
-                if(registered)
-                    valid = true;
-                break;
-            }
-        }
+    // if(contest){
+    //     for(prob of contest.questions){
+    //         if(prob == problemId){
+    //             let registered = await ContestRegistration.find({user : req.user.id, test : contest.id});
+    //             if(registered)
+    //                 valid = true;
+    //             break;
+    //         }
+    //     }
         
-    }
+    // }
     if(!valid){
         return res.json({
             message : 'problem is not available'
@@ -317,8 +318,95 @@ module.exports.destroySession = async function(req,res){
         message : "success"
     })
 }
+module.exports.getAllProblems = async function(req,res){
+    try{
+        let problemSet = await Problem.find({});
+        problemSet = problemSet.filter((obj)=>{return obj.status == true;});
+        if (problemSet){
+            
 
+            let usrset = problemSet.map((obj)=>{
+                let solvedbyUser = false;
+                if(req.user)
+                    solvedbyUser = ((obj.solvedby.find((val)=>{return val == req.user.id})) != undefined);
 
+                return {
+                    title : obj.title, 
+                    statement : obj.statement,
+                    solvedby : obj.solvedby,
+                    constraint : obj.constraint,
+                    timelimit : obj.timelimit,
+                    memorylimit : obj.memorylimit,
+                    sampletestcases : obj.testcases.filter((tc)=>{return (tc.sample == true);}),
+                    solvedbyUser : (solvedbyUser==true)?"true":"false",
+                    id : obj.id
+                }
+            });
+
+            return res.status(200).json({
+                message : true,
+                data : usrset
+            });
+        }else{
+            return res.status(200).json({
+                message : false,
+                data : null
+            })
+        }
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message : "internal server error",
+            data : null
+        })
+    }
+
+}
+module.exports.getproblem = async function(req,res){
+    try{
+        
+
+        console.log(req.params.id);
+        if(!(req.params && req.params.id)){
+            return res.status(200).json({
+                message : "no problem found",
+                data : {}
+            })
+        }
+        else{
+            
+            let obj = await Problem.findById(req.params.id);
+            let solvedbyUser = false;
+            if(req.user)
+                solvedbyUser = ((obj.solvedby.find((val)=>{return val == req.user.id})) != undefined);
+            if(obj){
+                return res.status(200).json({
+                    message : "success",
+                    data : {
+                        title : obj.title, 
+                        statement : obj.statement,
+                        solvedby : obj.solvedby,
+                        constraint : obj.constraint,
+                        timelimit : obj.timelimit,
+                        memorylimit : obj.memorylimit,
+                        sampletestcases : obj.testcases.filter((tc)=>{return (tc.sample == true);}),
+                        solvedbyUser : (solvedbyUser==true)?"true":"false",
+                        id : obj.id
+                    }
+                });
+            }else{
+                return res.status(200).json({
+                    message : "failure",
+                    data : {}
+                });
+            }
+        }
+    }catch(err){
+        console.log(err.message);
+    }
+    
+}
 
 
 

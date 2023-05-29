@@ -13,14 +13,14 @@ const cookieParser = require('cookie-parser');
 const middleware = require('./config/middleware');
 
 const corsOptions = {
-    origin: 'http://localhost:3001', 
+    origin: 'http://localhost:3000', 
     credentials: true, // Enable credentials (cookies, authorization headers, etc.)
 };
 
 app.use(cors(corsOptions));
 app.use(express.urlencoded({extended : true}));
-app.use(cookieParser());
 app.use(express.json());
+app.use(cookieParser());
 app.use(session({
     name : 'examfire',
     secret : 'exam-fire',

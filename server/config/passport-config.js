@@ -6,6 +6,7 @@ const User = require('../models/user');
 var opts = {
     jwtFromRequest : (req)=>{
         let token = null;
+        
         if (req && req.cookies) {
         token = req.cookies.jwt;
         }

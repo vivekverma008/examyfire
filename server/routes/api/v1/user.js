@@ -13,4 +13,6 @@ router.get('/showParticipants',contestController.getallcontestants);
 router.get('/entercontest',contestController.enterContest);
 router.get('/getJobStatus/:id', userController.getjobStatus);
 router.get('/logout' , userController.destroySession);
+router.get('/getAllProblems',userController.getAllProblems);
+router.get('/getproblem/:id',userController.getproblem);
 module.exports = router;
