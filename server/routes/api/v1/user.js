@@ -15,4 +15,6 @@ router.get('/getJobStatus/:id', userController.getjobStatus);
 router.get('/logout' , userController.destroySession);
 router.get('/getAllProblems',userController.getAllProblems);
 router.get('/getproblem/:id',userController.getproblem);
+router.get('/getcontest/:slug' ,contestController.getTest );
+router.get('/getsuggestion' , userController.getsuggestionfromquery);
 module.exports = router;

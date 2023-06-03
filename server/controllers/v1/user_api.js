@@ -22,6 +22,7 @@ const outputfilepath = path.join(dirprob,"output.txt");
 const passport = require('passport');
 const {Queue , Worker , QueueEvents} = require('bullmq') ;
 const ContestRegistration = require('../../models/contestRegistration');
+const { title } = require('process');
 
 const connections = {
     host : "127.0.0.1",
@@ -42,21 +43,22 @@ const myWorker = new Worker("submitqueue",
             throw Error(`cannot find job with id ${jobId}`);
         }
         let problem = await Problem.findById(data.problemId);
-        const testcases = problem.testcases;
+        const testcases = await problem.testcases;
         job["startedAt"] = new Date();
         let checkcompile = await Codeapis.checkcompile(job.filepath);
         console.log(checkcompile)
 
 
         try{
-            
+            console.log(testcases);
             job["verdict"] = "ac";
 
             for(let tc of testcases){
-                if(checkcompile == false)break;
+                console.log("In Testcases checker");
+                if(checkcompile === false)break;
                 const start = moment(new Date());
                 console.log(tc);
-                await Codeapis.generateInOutTxt(tc.input , tc.output,problem.title);
+                await Codeapis.generateInOutTxt(tc.input , tc.output);
                 fs.writeFileSync(outputfilepath,"");
                 
                 try{
@@ -244,9 +246,9 @@ module.exports.submit = async function(req,res){
     }
     let job;
     try{
-        let filepath = Codeapis.generateFile(language , code);
-        console.log();
-        filepath = (await filepath).toString()
+        let filepath = await Codeapis.generateFile(language , code);
+        console.log(filepath);
+        filepath = ( filepath).toString()
         job = await Job.create({
             language : language,
             filepath : filepath,
@@ -407,8 +409,16 @@ module.exports.getproblem = async function(req,res){
     }
     
 }
-
-
+module.exports.getsuggestionfromquery = async function(req, res){
+    console.log(req.query.query);
+    let response = await Problem.find({title : {$regex : new RegExp(req.query.query, 'i')}}).limit(5);
+    let suggestions = response.map((response)=>{
+        return {id : response._id  , title : response.title , solvedBy : response.solvedby};
+    })
+    return res.json({
+        suggestions : suggestions
+    })
+}
 
 
 

@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 let contestschema = new mongoose.Schema({
     slug : {
         type : "string",
-        required : true
+        required : true,
+        unique : true
     },
     questions : [{
         type : mongoose.Schema.Types.ObjectId,

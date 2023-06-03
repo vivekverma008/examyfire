@@ -17,7 +17,7 @@ module.exports.generateFile = async function(lang , code){
      fs.writeFileSync(filepath,code);
     return filepath;
 }
-module.exports.generateInOutTxt = async function(inp , out , problemslug){
+module.exports.generateInOutTxt = async function(inp , out ){
     try{
             const dirprob = dirCodes;
         if(!fs.existsSync(dirprob)){
@@ -25,12 +25,13 @@ module.exports.generateInOutTxt = async function(inp , out , problemslug){
         }
         
         
-            fs.mkdirSync(dirprob,{recursive: true});
+            
             const inputfilepath = path.join(dirprob,"input.txt");
             fs.writeFileSync(inputfilepath,inp);
             const answerfilepath = path.join(dirprob,"answer.txt");
             fs.writeFileSync(answerfilepath , out);
-        
+            console.log(inp);
+            console.log(out);
 
         return true;
 

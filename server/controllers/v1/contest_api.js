@@ -36,6 +36,7 @@ module.exports.createContest = async(req,res)=>{
         });
     }
     try{
+        console.log(req.body);
         
         body('list').isArray({min  :1});
         body('regStartTime').isDate();
@@ -49,27 +50,27 @@ module.exports.createContest = async(req,res)=>{
         }
     
         let valid = true;
-        req.body.duration = req.body.endTime - req.body.startTime;
         if((req.body.regStartTime) >= (req.body.regEndTime))valid = false;
         if(req.body.duration < 1)valid = false;
         if((req.body.startTime) >= (req.body.endTime))valid = false;
+        
         let newls = await Promise.all(req.body.list.map(async(que)=>{
-            let pr=   await(Problem.findOne({title : que}));
-            pr.status = false;
+            let pr=   await(Problem.findOne({title : que.title}));
+            // pr.status = false;
             await pr.save();
             return pr.id;
         }));
         console.log('my list');
-        console.log(newls);
+        newls = Array.from(new Set(newls));
         
         let tempdata = await Contest.create({
-            slug : req.body.title,
+            slug : req.body.slug,
             questions : newls,
-            startTime : (req.body.startTime),
-            endTime : (req.body.endTime),
+            startTime : new Date(req.body.startTime).toISOString(),
+            endTime : new Date(req.body.endTime).toISOString(),
             duration  : (req.body.duration),
-            regStartTime : (req.body.regStartTime),
-            regEndTime : (req.body.regEndTime),
+            regStartTime : new Date(req.body.regStartTime).toISOString(),
+            regEndTime : new Date(req.body.regEndTime).toISOString(),
             createdBy : creator.id
         });
          return res.json({
@@ -78,7 +79,7 @@ module.exports.createContest = async(req,res)=>{
         })
 
     }catch(err){
-        console.log(err);
+        console.log(err.message);
         return res.json({
             message : 'err creating contst '
         });
@@ -118,7 +119,7 @@ module.exports.getAllTest = async function(req,res){
         res.json({
             success : true,
             testlist : await Promise.all(result.map(v=>({
-                _id: v._id, title : v.title,status : v.status
+                id: v._id, title : v.slug,status : v.status
             })))
         })
 
@@ -254,4 +255,34 @@ module.exports.enterContest = async function(req,res){
 
     })
 
+}
+module.exports.getTest = async function(req,res){
+    
+    try{
+        let slug = req.params.slug || null;
+        if(slug == null){
+            return res.status(404).json({
+                message : " no contest found with given slug"
+            })
+        }
+        let contest = await Contest.findOne({slug : slug}).populate('questions');
+        let ques_form = contest.questions.filter((ques)=>{return ques.status == true}).map((ques)=>{
+            return {
+                title : ques.title,
+                id : ques._id,
+                solvedby : ques.solvedby
+            }
+        });
+        if(contest){
+            return res.json({
+                questions : ques_form,
+                id : contest.id
+            });
+        }
+    }catch(err){
+        console.log(err.message);
+        return res.status(500).json({
+            message :  " internal server error"
+        })
+    }
 }
