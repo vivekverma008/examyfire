@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 var testregistrationschema = new mongoose.Schema({
   user : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : 'users'
+    ref : 'user'
   },
   test : {
     type : mongoose.Schema.Types.ObjectId,

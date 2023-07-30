@@ -50,6 +50,14 @@ module.exports.createContest = async(req,res)=>{
         }
     
         let valid = true;
+        let exist = await Contest.findOne({slug : req.body.slug});
+        if(exist){
+            return res.status(400).json({
+                success : false,
+                message : "contest already exist",
+                
+            });
+        }
         if((req.body.regStartTime) >= (req.body.regEndTime))valid = false;
         if(req.body.duration < 1)valid = false;
         if((req.body.startTime) >= (req.body.endTime))valid = false;
@@ -116,12 +124,21 @@ module.exports.getAllTest = async function(req,res){
                 result[x].status = correctStatus;
             }
         }
+        
         res.json({
             success : true,
-            testlist : await Promise.all(result.map(v=>({
-                id: v._id, title : v.slug,status : v.status
-            })))
+            testlist : await Promise.all(result.map(async(v)=>{
+                let userRegistered = await ContestRegistration.findOne({user : req.user.id , test : v.id});
+                return {
+                    id: v._id, title : v.slug,status : v.status,
+                    startTime : v.startTime, endTime  : v.endTime , duration : v.duration,
+                    regStartTime : v.regStartTime , regEndTime : v.regEndTime,user_registered : (userRegistered?true:false)
+                }
+
+            })
+            )
         })
+       
 
     }catch(err){
         console.log(err);
@@ -190,26 +207,34 @@ module.exports.testRegistration = async(req,res)=>{
     }
 }
 
-module.exports.getallcontestants = async function(req,res){
-    body('contestid').notEmpty();
-    const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        } 
-    try{
-
-        let list = await ContestRegistration.find({test  : req.body.contestid});
-        return res.json({
-            registeredCandidates : list,
-            success : true
-        })
-
-    }catch(err){
-        return res.json({
-            message : "internal server err"
-        })
+module.exports.getallcontestants = async function(req, res) {
+    const { contestid } = req.query;
+    if (!contestid) {
+      return res.status(400).json({ message: 'Missing contestid query parameter' });
     }
-}
+  
+    try {
+      console.log("contestid " , contestid);
+      let list = await ContestRegistration.find({ test: contestid }).populate('user');
+      console.log("contestid " ,list);
+      let listUpdated = list.map((v)=>{
+        return {
+            username : v.user.username,
+            usertype : v.user.usertype,
+            useremail : v.user.email,
+            id : v.user.id
+        }
+      })
+      console.log(listUpdated)
+      return res.json({
+        registeredCandidates: listUpdated,
+        success: true
+      });
+    } catch (err) {
+        console.log(err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  };
 
 
 module.exports.enterContest = async function(req,res){
@@ -266,7 +291,19 @@ module.exports.getTest = async function(req,res){
             })
         }
         let contest = await Contest.findOne({slug : slug}).populate('questions');
-        let ques_form = contest.questions.filter((ques)=>{return ques.status == true}).map((ques)=>{
+        let current_status = getTestStatus(contest);
+        if(current_status !== contest.status){
+            await updateStatus(contest,current_status);
+            contest.status = current_status;
+    
+        }
+        if( (req.user.id != contest.createdBy) &&(!(current_status == "TEST_COMPLETE" || current_status== "TEST_COMPLETE"))){
+            console.log(contest.status);
+            return res.status(403).json({
+                message : "cannot enter contest"
+            })
+        }
+        let ques_form = contest.questions.map((ques)=>{
             return {
                 title : ques.title,
                 id : ques._id,

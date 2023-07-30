@@ -143,10 +143,15 @@ module.exports.createSession = async function(req,res,next){
         }
         let token =  jwt.sign(user.toJSON(),'examyfire',{expiresIn : '1d'});
         await res.cookie('jwt' , token , {httpOnly : true , sameSite : "none" , secure : true});
+        console.log(req.body.email);
         return res.json({
             message : 'signIn successfull , here is your token',
             data : {
-                token : token
+                user : {
+                    email : user.email,
+                    usertype : user.usertype , 
+                    username : user.username
+                }
             } 
         })
     
@@ -419,7 +424,22 @@ module.exports.getsuggestionfromquery = async function(req, res){
         suggestions : suggestions
     })
 }
+module.exports.getuserinfo = async function (req,res){
+    try{
+        return res.status(200).json({
+            username : req.user.email,
+            usertype : req.user.usertype,
+            id : req.user.id
+        });
+    }catch(err){
+        console.log(err.message);
+        return res.status(500).json({
+            message : false,
+        })
+    }
 
+    
+}
 
 
 

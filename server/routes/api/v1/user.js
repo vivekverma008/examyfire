@@ -17,4 +17,5 @@ router.get('/getAllProblems',userController.getAllProblems);
 router.get('/getproblem/:id',userController.getproblem);
 router.get('/getcontest/:slug' ,contestController.getTest );
 router.get('/getsuggestion' , userController.getsuggestionfromquery);
+router.get('/getuserinfo' , userController.getuserinfo);
 module.exports = router;
