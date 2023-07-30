@@ -1,0 +1,319 @@
+body{
+  margin: 0;
+}
+#body{
+  padding-top: 0.75em;
+    max-width: 1200px;
+    
+    margin: 0 auto;
+}
+
+.TwoColoumn-content{
+    display: flex;
+    flex-direction:  row;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    height: 82vh;
+    margin: 1rem 0.15rem ;
+    align-items: stretch;
+}
+.flexColoumn{
+    display: flex;
+    flex-direction: column;
+       
+}
+.scroll-and-width50{
+    width: 50%;
+    overflow-y: scroll;
+}
+.footer{
+    height: 8.1vh;
+    margin : 0.05rem;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+}
+
+.CodeMirror{
+    height : 80%;
+}
+.boundarytable {
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    height: 82vh;
+    margin: 1rem 0.15rem ;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+    overflow-y: scroll;
+}
+.table {
+    width: 80%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin: 1px;
+  }
+
+.table th,
+.table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+.table th {
+    background-color: #f2f2f2;
+}
+.table tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+.table td:first-child {
+    font-weight: bold;
+}
+.test-cases {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .test-cases .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .test-cases .test-case {
+    margin-bottom: 0.5rem;
+  }
+  
+  .test-cases .test-case .input-label,
+  .test-cases .test-case .output-label,
+  .test-cases .test-case .explanation-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+  }
+  
+  .test-cases .test-case .input,
+  .test-cases .test-case .output,
+  .test-cases .test-case .explanation {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .test-cases .test-case .delete-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  .test-cases .add-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+  
+  .test-cases .add-button:hover {
+    background-color: #45a049;
+  }
+  
+  /* CSS styles for TestCaseForm component */
+  .test-case-form {
+    margin: 2rem;
+  }
+  
+  .test-case-form div label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .test-case-form div textarea,
+  .test-case-form div input[type='text'],
+  .test-case-form div input[type='number'],
+  .test-case-form div input[type='checkbox'] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  
+  .test-case-form button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin: 2px;
+  }
+  
+  .test-case-form div button:hover {
+    background-color: #1976d2;
+  }
+ 
+  .sidePart{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+  }
+  .sideContent{
+    
+    flex-direction: column;
+    flex-grow: 10;
+  }
+
+  .second-level-menu-list {
+    display: flex;
+    flex-direction: row;
+    height: 29px;
+    overflow: hidden;
+    position: relative;
+    padding: 1px;
+   
+}
+.second-level-menu-list li{
+  
+  font-family: pt sans narrow,sans-serif;
+  list-style: none;
+  margin: 0.1em 0.1em;
+  font-size: 0.8em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #695757;
+  outline: none;
+  text-align: center;
+  line-height: 20px;
+  top: 1px;
+  z-index: 10;
+  letter-spacing: 0;
+  float: left;
+  display: block;
+  margin: auto 8px;
+  
+}
+.second-level-menu-list li:hover{
+  font-family: pt sans narrow,sans-serif;
+  list-style: none;
+  margin: 0.1em 0.1em;
+  font-size: 0.81em;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #000;
+  outline: none;
+  text-align: center;
+  line-height: 20px;
+  top: 1px;
+  z-index: 10;
+  letter-spacing: 0;
+  float: left;
+  display: block;
+  margin: auto 8px;
+}
+.tabletitle{
+  padding: 4px 0 0 6px;
+  font-size: 0.89rem;
+  position: relative;
+  border-radius: 6px;
+  border-color: #888;
+  border-color: rgb(186, 185, 186);
+}
+/* .datatable{
+  background-color: #E1E1E1;
+  padding-bottom: 3px;
+  width: 80%;
+  margin: 1px;
+} */
+.contestinfo{
+  width: 100%;
+  
+}
+tbody{
+  display: table-row-group;
+  vertical-align: middle;
+  border-color: inherit;
+}
+/* Styling for the contest-info table */
+.contest-info {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Styling for the table header cells */
+.tablehead {
+  background-color: #f0f0f0;
+  text-align: left;
+  padding: 10px;
+}
+
+/* Styling for regular table cells */
+.contest-info td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+/* Styling for the contest title */
+.contest-info td:first-child {
+  font-weight: bold;
+}
+
+/* Styling for the "Enter Contest" link */
+.contest-info a {
+  color: blue;
+  text-decoration: underline;
+}
+
+/* Styling for the "Ongoing" text and "Enter Contest" link */
+.contest-info td:nth-child(4) {
+  text-align: center;
+}
+
+/* Styling for the "Before Start" text */
+.contest-info td:nth-child(4)::before {
+  content: "Before Start";
+}
+
+/* Styling for the "Registrations Closed" text */
+.contest-info td:nth-child(5)::before {
+  content: "Registrations Closed";
+}
+
+/* Styling for the "Registrations Started" text */
+.contest-info td:nth-child(5)::before {
+  content: "Registrations Started";
+}
+
+/* Styling for the "Register" button */
+.contest-info button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* Styling for the "Registered" text and "Registered Candidates" link */
+.contest-info td:nth-child(5) a {
+  color: blue;
+  text-decoration: underline;
+}
+
